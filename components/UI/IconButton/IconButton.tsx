@@ -1,0 +1,35 @@
+import React from 'react';
+import {Pressable, StyleSheet, View} from "react-native";
+import {Ionicons} from "@expo/vector-icons";
+
+interface IProps {
+    icon: any
+    size: number
+    color: string
+    onPress: () =>void
+}
+
+const IconButton: React.FC<IProps> = ({icon,size,color, onPress}) => {
+    return (
+        <Pressable style={({pressed})=>pressed && styles.pressed} onPress={onPress}>
+            <View style={styles.buttonContainer}>
+                <Ionicons name={icon} color={color} size={size}/>
+            </View>
+        </Pressable >
+    );
+};
+
+export default IconButton;
+
+
+const styles = StyleSheet.create({
+    buttonContainer: {
+        borderRadius: 26,
+        padding: 6,
+        marginHorizontal: 8,
+        marginVertical: 2,
+    },
+    pressed: {
+        opacity: 0.7
+    }
+})
