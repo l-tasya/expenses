@@ -5,20 +5,25 @@ import {RootStackParamList} from "../App";
 import IconButton from "../components/UI/IconButton/IconButton";
 import {GlobalStyles} from "../constants/styles";
 import Button from "../components/UI/Button/Button";
+import {useDispatch} from "react-redux";
+import {addExpense, removeExpense, updateExpense} from "../store/extensesReducer";
 
 const ManageExpenses = ({route, navigation}: NativeStackScreenProps<RootStackParamList, 'ManageExpenses'>) => {
     const editedExpenseId = route.params?.id;
     const isEditing = !!editedExpenseId;
-
+    const dispatch = useDispatch()
     useLayoutEffect(() => {
         navigation.setOptions({
             title: isEditing ? 'Edit expense' : 'Add Expense',
         })
     }, [isEditing, navigation])
 
-
     function deleteExpense() {
+        if (isEditing) {
+            dispatch(removeExpense({id: editedExpenseId}))
+        }
         navigation.goBack()
+
     }
 
     function cancel() {
@@ -26,7 +31,14 @@ const ManageExpenses = ({route, navigation}: NativeStackScreenProps<RootStackPar
     }
 
     function confirm() {
-        navigation.goBack()
+        if (isEditing) {
+            dispatch(updateExpense({expenseID: editedExpenseId, expensePayload: {description: 'LALALA', amount: 9999}}))
+            navigation.goBack()
+        } else {
+            dispatch(addExpense({description: 'TEST', amount: 0}))
+            navigation.goBack()
+        }
+
     }
 
     return (

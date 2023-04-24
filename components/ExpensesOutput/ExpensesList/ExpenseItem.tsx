@@ -7,7 +7,7 @@ import {RootStackParamList} from "../../../App";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 interface IProps {
-    date: Date
+    date: string
     description: string
     amount: number
     id: string
