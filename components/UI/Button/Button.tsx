@@ -6,15 +6,16 @@ interface IProps {
     onPress: () => void
     children: React.ReactNode
     mode?: 'flat'| 'default',
-    style?: ViewStyle
+    style?: ViewStyle,
+    disabled?: boolean
 }
 
 
-const Button: React.FC<IProps> = ({children, onPress, mode ='default', style}) => {
+const Button: React.FC<IProps> = ({children, onPress, mode ='default', style,disabled=false}) => {
     return (
         <View style={style}>
-            <Pressable onPress={onPress} style={({pressed}) =>pressed && styles.pressed}>
-                <View style={[styles.button, mode ==='flat' && styles.flat]}>
+            <Pressable disabled={disabled} onPress={onPress} style={({pressed}) =>pressed && styles.pressed}>
+                <View style={[styles.button, mode ==='flat' && styles.flat, disabled && styles.disabled]}>
                     <Text style={[styles.buttonText,  mode === 'flat' && styles.flatText]}>{children}</Text>
                 </View>
             </Pressable>
@@ -41,6 +42,10 @@ const styles = StyleSheet.create({
         opacity: 0.75,
         backgroundColor: GlobalStyles.colors.primary100,
         borderRadius: 4,
+    },
+    disabled: {
+        backgroundColor: GlobalStyles.colors.gray500,
+        opacity: 0.5,
     }
 })
 

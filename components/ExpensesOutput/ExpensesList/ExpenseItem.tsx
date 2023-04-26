@@ -1,7 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from "react-native";
 import {GlobalStyles} from "../../../constants/styles";
-import {getFormattedDate} from "../../../util/date";
 import {useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "../../../App";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
@@ -15,15 +14,17 @@ interface IProps {
 
 const ExpenseItem: React.FC<IProps> = ({date, amount, description, id}) => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
     function expensePressHandler() {
         navigation.navigate('ManageExpenses', {id: id})
     }
+
     return (
-        <Pressable style={({pressed})=>pressed&&styles.pressed} onPress={expensePressHandler}>
+        <Pressable style={({pressed}) => pressed && styles.pressed} onPress={expensePressHandler}>
             <View style={styles.expenseItem}>
                 <View>
                     <Text style={[styles.textBase, styles.description]}>{description}</Text>
-                    <Text style={styles.textBase}>{getFormattedDate(date)}</Text>
+                    <Text style={styles.textBase}>{date}</Text>
                 </View>
                 <View style={styles.priceContainer}>
                     <Text style={styles.amount}>${amount.toFixed(2)}</Text>
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
         color: GlobalStyles.colors.primary50,
 
     },
-    description:{
+    description: {
         fontSize: 16,
         marginBottom: 4,
         fontWeight: 'bold',

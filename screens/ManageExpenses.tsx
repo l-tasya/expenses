@@ -4,14 +4,18 @@ import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../App";
 import IconButton from "../components/UI/IconButton/IconButton";
 import {GlobalStyles} from "../constants/styles";
-import Button from "../components/UI/Button/Button";
-import {useDispatch} from "react-redux";
-import {addExpense, removeExpense, updateExpense} from "../store/extensesReducer";
+import {useDispatch, useSelector} from "react-redux";
+import {addExpense, Expense, removeExpense, updateExpense} from "../store/extensesReducer";
+import ExpenseForm, {ExpensePayload} from "../components/ManageExpense/ExpenseForm";
+import {AppRootState} from "../store/store";
 
 const ManageExpenses = ({route, navigation}: NativeStackScreenProps<RootStackParamList, 'ManageExpenses'>) => {
     const editedExpenseId = route.params?.id;
     const isEditing = !!editedExpenseId;
     const dispatch = useDispatch()
+
+    const expenses = useSelector<AppRootState, Expense[]>(t=>t.expenses.expenses)
+    const expense = expenses.find((t=>t.id === editedExpenseId))
     useLayoutEffect(() => {
         navigation.setOptions({
             title: isEditing ? 'Edit expense' : 'Add Expense',
@@ -30,23 +34,28 @@ const ManageExpenses = ({route, navigation}: NativeStackScreenProps<RootStackPar
         navigation.goBack()
     }
 
-    function confirm() {
+    function confirm(payload: ExpensePayload) {
         if (isEditing) {
-            dispatch(updateExpense({expenseID: editedExpenseId, expensePayload: {description: 'LALALA', amount: 9999}}))
-            navigation.goBack()
+            dispatch(updateExpense({
+                expenseID: editedExpenseId,
+                expensePayload: {description: payload.description, amount: payload.amount, date: payload.date}
+            }))
         } else {
-            dispatch(addExpense({description: 'TEST', amount: 0}))
-            navigation.goBack()
+            dispatch(addExpense({description: payload.description, amount: payload.amount, date: payload.date}))
+
         }
-
+        navigation.goBack()
     }
+        let initialState = {
+            amount: expense?expense.amount.toString():'',
+            date: expense?expense.date:'',
+            description: expense?expense.description:'',
 
+        }
     return (
         <View style={styles.container}>
-            <View style={styles.buttonsContainer}>
-                <Button style={styles.button} mode='flat' onPress={cancel}>Cancel</Button>
-                <Button style={styles.button} onPress={confirm}>{isEditing ? 'Update' : 'Add'}</Button>
-            </View>
+            <ExpenseForm onSubmit={confirm} onCancel={cancel} submitButtonLabel={isEditing ? 'Update' : 'Add'} initialState={initialState}/>
+
             {
                 isEditing &&
                 <View style={styles.deleteContainer}>
@@ -75,14 +84,6 @@ const styles = StyleSheet.create({
         borderColor: GlobalStyles.colors.primary200,
         alignItems: 'center',
     },
-    buttonsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    button: {
-        minWidth: 120,
-        marginHorizontal: 8,
-    }
+
 })
 export default ManageExpenses;
